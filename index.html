@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>چت زنده با WebSocket</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+<body class="font-sans m-0 p-0 text-center">
+
+  <h1 class="bg-green-500 text-white m-0 p-4 text-center">چت زنده</h1>
+  <div id="messages" class="m-5 p-4 max-w-xl h-72 overflow-y-auto border border-gray-300 rounded text-right"></div>
+  <input id="messageInput" type="text" placeholder="پیام بنویسید..." class="w-7/10 p-3 m-2 border border-gray-300 rounded">
+  <button id="sendButton" class="p-3 px-5 bg-green-500 text-white rounded cursor-pointer hover:bg-green-600">ارسال</button>
+
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const messages = document.getElementById('messages');
+
+     
+    const sendMessage = () => {
+      const message = messageInput.value;
+      if (message.trim() !== "") {
+        socket.emit('message', message);
+        messageInput.value = '';
+      }
+    };
+
+      
+    sendButton.addEventListener('click', sendMessage);
+
+
+    messageInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    
+    socket.on('message', (msg) => {
+      const newMessage = document.createElement('p');
+      newMessage.textContent = msg;
+      messages.appendChild(newMessage);
+    });
+  </script>
+
+</body>
+</html>
